@@ -2,478 +2,395 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Selamat Ulang Tahun</title>
+<title>Kartu Ulang Tahun</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Caveat:wght@600;700&display=swap');
+
   :root{
-    --pink:#ff6fa5;
-    --pink-dark:#e0447e;
+    --cream:#fff3e2;
+    --peach:#ffb4a2;
+    --coral:#ff6f61;
     --gold:#ffd166;
-    --cream:#fff7f0;
-    --purple:#7b5ea7;
+    --plum:#5c3d5c;
+    --teal:#2a9d8f;
   }
+
   *{box-sizing:border-box;}
-  html,body{
-    margin:0;padding:0;
-    width:100%;height:100%;
-    font-family:'Comic Sans MS','Segoe UI',cursive,sans-serif;
-    background:radial-gradient(circle at 50% 20%,#3b2b5e,#1a1330 70%);
-    overflow:hidden;
-    display:flex;align-items:center;justify-content:center;
-  }
-  #stage{
-    position:relative;
-    width:100vw;
-    height:100vh;
-    height:100dvh;
+
+  body{
+    margin:0;
+    min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
-  }
-
-  /* ===== FIREWORKS CANVAS ===== */
-  #fw-canvas{
-    position:absolute;
-    top:0;left:0;
-    width:100%;height:100%;
-    pointer-events:none;
-    z-index:5;
-    opacity:0;
-    transition:opacity .3s;
-  }
-  #fw-canvas.on{opacity:1;}
-
-  /* ===== ENVELOPE ===== */
-  #envelope-wrap{
+    background:
+      radial-gradient(circle at 20% 20%, #ffe0c7 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, #ffc8dd 0%, transparent 45%),
+      var(--cream);
+    font-family:'Fredoka', sans-serif;
+    overflow:hidden;
     position:relative;
-    width:280px;height:190px;
-    cursor:pointer;
-    z-index:10;
-    transition:transform .5s ease, opacity .5s ease;
   }
-  #envelope-wrap.hide{
-    transform:scale(0.3) translateY(-40px);
-    opacity:0;
+
+  /* confetti dots floating in bg */
+  .confetti{
+    position:fixed;
+    inset:0;
     pointer-events:none;
+    z-index:0;
   }
+  .confetti span{
+    position:absolute;
+    width:10px;height:10px;
+    border-radius:2px;
+    opacity:.7;
+    animation:float 6s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-25px) rotate(180deg);}
+  }
+
+  .stage{
+    position:relative;
+    width:min(90vw, 420px);
+    z-index:1;
+  }
+
+  .hint{
+    text-align:center;
+    color:var(--plum);
+    font-size:1rem;
+    margin-bottom:14px;
+    opacity:.75;
+    letter-spacing:.5px;
+  }
+
+  /* ENVELOPE */
+  .envelope{
+    position:relative;
+    width:100%;
+    aspect-ratio: 3 / 2;
+    cursor:pointer;
+    perspective:1200px;
+    user-select:none;
+  }
+
   .env-body{
     position:absolute;
     inset:0;
-    background:linear-gradient(180deg,#ffffff,#ffe9f2);
-    border-radius:10px;
-    box-shadow:0 15px 35px rgba(0,0,0,.4);
+    background: linear-gradient(160deg, #ffffff, var(--cream));
+    border-radius:14px;
+    box-shadow: 0 25px 50px -15px rgba(92,61,92,.4), 0 0 0 2px rgba(255,255,255,.6) inset;
     overflow:hidden;
+    transition: transform .5s ease;
   }
-  .env-body::before{
+
+  .env-body::before,
+  .env-body::after{
     content:"";
     position:absolute;
-    inset:0;
-    background:
-      linear-gradient(135deg, transparent 49.6%, rgba(224,68,126,.15) 50%);
+    top:0;
+    width:0;
+    height:0;
+    border-top: 62% solid #ffe3d1;
   }
-  .env-line{
-    position:absolute;
-    bottom:0;left:0;right:0;
-    height:60%;
-    background:#ffe0ec;
-    clip-path:polygon(0 100%,50% 40%,100% 100%);
+  .env-body::before{
+    left:0;
+    border-left: 50% solid transparent;
+    border-right: 0 solid transparent;
   }
+  .env-body::after{
+    right:0;
+    border-right: 50% solid transparent;
+    border-left: 0 solid transparent;
+  }
+
   .env-flap{
     position:absolute;
-    top:0;left:0;right:0;
-    height:100px;
-    background:linear-gradient(160deg,var(--pink),var(--pink-dark));
-    clip-path:polygon(0 0,50% 85%,100% 0);
-    transform-origin:top center;
-    transition:transform 1s cubic-bezier(.68,-0.4,.27,1.4);
-    z-index:3;
-    box-shadow:0 4px 10px rgba(0,0,0,.2);
+    top:0; left:0; width:100%; height:62%;
+    background: linear-gradient(135deg, var(--coral), #ff8a65);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    transition: transform .7s cubic-bezier(.68,-.4,.27,1.4);
+    z-index:5;
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
   }
-  #envelope-wrap.open .env-flap{
-    transform:rotateX(180deg);
+
+  .envelope.open .env-flap{
+    transform: rotateX(180deg);
   }
-  .env-seal{
+
+  .seal{
     position:absolute;
-    top:62px;left:50%;
+    top:38%;
+    left:50%;
     transform:translate(-50%,-50%);
-    width:46px;height:46px;
-    background:radial-gradient(circle at 35% 30%,var(--gold),#e6a800);
+    width:58px; height:58px;
+    background: radial-gradient(circle at 35% 30%, var(--gold), #e8a13a);
     border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:22px;
-    box-shadow:0 3px 8px rgba(0,0,0,.35);
-    z-index:4;
-    transition:opacity .3s, transform .3s;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem;
+    box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    z-index:6;
+    transition: opacity .3s ease .1s, transform .3s ease .1s;
   }
-  #envelope-wrap.open .env-seal{
+  .envelope.open .seal{
     opacity:0;
-    transform:translate(-50%,-50%) scale(0);
-  }
-  .env-hint{
-    position:absolute;
-    bottom:-38px;left:0;right:0;
-    text-align:center;
-    color:#ffe9f2;
-    font-size:15px;
-    letter-spacing:.5px;
-    animation:bounce 1.4s infinite;
-  }
-  @keyframes bounce{
-    0%,100%{transform:translateY(0);}
-    50%{transform:translateY(6px);}
+    transform:translate(-50%,-50%) scale(.3);
   }
 
-  /* ===== CARD ===== */
-  #card{
+  .letter{
     position:absolute;
+    left:6%;
+    bottom:6%;
+    width:88%;
+    height:78%;
+    background: #fffdf8;
+    border-radius:10px;
+    box-shadow: 0 -6px 20px rgba(0,0,0,.12);
+    z-index:2;
+    transform: translateY(6%);
+    transition: transform .6s cubic-bezier(.2,.9,.3,1.2) .15s;
+  }
+
+  .envelope.open .letter{
+    transform: translateY(-38%);
+  }
+
+  .label{
+    position:absolute;
+    left:0; right:0; bottom:10%;
+    text-align:center;
+    font-family:'Caveat', cursive;
+    font-size:1.4rem;
+    color:var(--plum);
+    z-index:6;
+  }
+
+  /* CARD / MODAL revealed */
+  .card-modal{
+    position:fixed;
     inset:0;
-    width:100%;
-    height:100%;
-    height:100dvh;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    background:linear-gradient(180deg,var(--cream),#ffe9f2);
-    border-radius:0;
-    padding:40px 24px 50px;
     display:flex;
-    flex-direction:column;
     align-items:center;
-    justify-content:flex-start;
-    box-shadow:none;
+    justify-content:center;
+    background: rgba(92,61,92,0);
+    pointer-events:none;
+    transition: background .5s ease;
+    z-index:20;
+  }
+  .card-modal.show{
+    background: rgba(92,61,92,.55);
+    pointer-events:auto;
+    backdrop-filter: blur(3px);
+  }
+
+  .card{
+    width:min(88vw, 380px);
+    background: linear-gradient(170deg, #fffaf2, #ffe9d6);
+    border-radius:20px;
+    padding:28px 24px 24px;
     text-align:center;
+    box-shadow: 0 30px 60px rgba(0,0,0,.35);
+    transform: scale(.6) translateY(40px) rotate(-3deg);
     opacity:0;
-    transform:scale(.4) translateY(40px);
-    transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.3,1.3);
-    z-index:8;
-    border:none;
+    transition: transform .55s cubic-bezier(.2,1.4,.4,1), opacity .4s ease;
+    position:relative;
   }
-  #card .content{
-    width:100%;
-    max-width:520px;
-    margin:auto;
-  }
-  @media (min-width:700px){
-    #card{
-      inset:auto;
-      width:min(92vw,480px);
-      max-height:88vh;
-      height:auto;
-      border-radius:22px;
-      padding:28px 24px 24px;
-      box-shadow:0 25px 60px rgba(0,0,0,.5);
-      border:3px solid #fff;
-    }
-    #card h1{font-size:26px;}
-    #card .sub{font-size:14px;}
-    #card .msg{font-size:15.5px;line-height:1.7;margin-bottom:18px;}
-    .img-frame{max-width:260px;}
-    .signature{font-size:30px;}
-    .signature-role{font-size:12px;}
-    .reveal-btn{padding:13px 26px;font-size:15px;}
-  }
-  #card.show{
+  .card-modal.show .card{
+    transform: scale(1) translateY(0) rotate(0deg);
     opacity:1;
-    transform:scale(1) translateY(0);
   }
-  #card h1{
-    margin:6px 0 4px;
-    color:var(--pink-dark);
-    font-size:30px;
-    line-height:1.3;
-  }
-  #card .sub{
-    color:var(--purple);
-    font-size:17px;
-    margin-bottom:16px;
-  }
-  #card .msg{
-    color:#5a4a4a;
-    font-size:18px;
-    line-height:1.85;
-    margin:0 0 22px;
-    text-align:left;
-    opacity:0;
-    transition:opacity .6s ease .3s;
-  }
-  #card.show .msg{opacity:1;}
 
-  .reveal-btn{
-    display:inline-block;
-    margin:10px 0 10px;
-    padding:16px 30px;
-    font-family:inherit;
-    font-size:17px;
-    font-weight:bold;
-    color:#fff;
-    background:linear-gradient(135deg,var(--pink),var(--pink-dark));
+  .close-btn{
+    position:absolute;
+    top:10px; right:14px;
+    background:none;
     border:none;
-    border-radius:30px;
+    font-size:1.4rem;
+    color:var(--plum);
     cursor:pointer;
-    box-shadow:0 8px 18px rgba(224,68,126,.4);
-    opacity:0;
-    transform:translateY(10px);
-    transition:opacity .5s ease .5s, transform .5s ease .5s, box-shadow .2s, transform .15s;
-    animation:pulse 1.8s infinite;
+    opacity:.6;
   }
-  #card.show .reveal-btn{opacity:1;transform:translateY(0);}
-  .reveal-btn:active{transform:scale(.96);}
-  .reveal-btn.hidden{display:none;}
-  @keyframes pulse{
-    0%,100%{box-shadow:0 8px 18px rgba(224,68,126,.4);}
-    50%{box-shadow:0 8px 26px rgba(224,68,126,.7);}
-  }
+  .close-btn:hover{opacity:1;}
 
-  #reveal-section{
-    width:100%;
-    max-height:0;
-    overflow:hidden;
-    opacity:0;
-    transition:max-height .8s ease, opacity .6s ease;
-  }
-  #reveal-section.show{
-    max-height:900px;
-    opacity:1;
-    margin-top:12px;
-  }
-
-  .img-frame{
-    width:100%;
-    max-width:340px;
-    margin:6px auto 20px;
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
-    border:5px solid #fff;
-    opacity:0;
-    transform:scale(.85);
-    transition:opacity .5s ease .15s, transform .5s ease .15s;
-  }
-  #reveal-section.show .img-frame{opacity:1;transform:scale(1);}
-  .img-frame img{
-    display:block;
-    width:100%;
-    height:auto;
-  }
-
-  .signature-wrap{
-    opacity:0;
-    transition:opacity .5s ease .4s;
-  }
-  #reveal-section.show .signature-wrap{opacity:1;}
-  .signature-line{
-    width:60%;
-    height:1px;
-    background:var(--pink);
+  /* Illustration: cake made with CSS */
+  .cake{
+    width:150px;
     margin:6px auto 10px;
+    position:relative;
   }
-  .signature{
-    font-family:'Brush Script MT','Segoe Script',cursive;
-    font-size:38px;
-    color:var(--pink-dark);
+  .plate{
+    width:150px; height:14px;
+    background: linear-gradient(90deg, #e0c3fc, #ffb4a2);
+    border-radius:50%;
+    margin-top:-4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,.15);
   }
-  .signature-role{
-    font-size:14px;
-    color:var(--purple);
-    margin-top:2px;
+  .tier{
+    height:34px;
+    border-radius:6px;
+    margin:0 auto;
+    position:relative;
+    box-shadow: inset 0 -6px 0 rgba(0,0,0,.08);
+  }
+  .tier1{width:130px; background: var(--coral);}
+  .tier2{width:100px; background: var(--gold);}
+  .tier3{width:70px; background: var(--teal);}
+  .tier::after{
+    content:"";
+    position:absolute;
+    top:-6px; left:0; right:0;
+    height:10px;
+    background: inherit;
+    filter:brightness(1.15);
+    border-radius:50% / 10px;
+  }
+  .candle{
+    width:6px; height:26px;
+    background: linear-gradient(#fff, #ffe08a);
+    margin:0 auto;
+    border-radius:2px;
+    position:relative;
+  }
+  .flame{
+    width:10px;height:14px;
+    background: radial-gradient(circle, #fff6b0, var(--gold) 60%, var(--coral) 100%);
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    position:absolute;
+    top:-13px; left:50%;
+    transform:translateX(-50%);
+    animation: flicker 1s ease-in-out infinite alternate;
+  }
+  @keyframes flicker{
+    from{transform:translateX(-50%) scale(1) rotate(-3deg);}
+    to{transform:translateX(-50%) scale(1.15) rotate(3deg);}
   }
 
   .balloons{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    z-index:1;
-    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:6px;
   }
   .balloon{
-    position:absolute;
-    bottom:-120px;
-    font-size:34px;
-    animation:rise linear infinite;
-    opacity:.85;
+    width:26px;height:32px;
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    position:relative;
+    animation: bob 3s ease-in-out infinite;
   }
-  @keyframes rise{
-    0%{transform:translateY(0) translateX(0) rotate(0deg);}
-    50%{transform:translateY(-55vh) translateX(15px) rotate(8deg);}
-    100%{transform:translateY(-110vh) translateX(-10px) rotate(-6deg);}
+  .balloon:nth-child(1){background:var(--coral); animation-delay:0s;}
+  .balloon:nth-child(2){background:var(--gold); animation-delay:.4s;}
+  .balloon:nth-child(3){background:var(--teal); animation-delay:.8s;}
+  @keyframes bob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+  }
+
+  .title{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:2.1rem;
+    color:var(--coral);
+    margin:6px 0 4px;
+  }
+
+  .msg{
+    color:var(--plum);
+    font-size:.98rem;
+    line-height:1.55;
+    margin:0 0 6px;
+  }
+
+  .signature{
+    font-family:'Caveat', cursive;
+    font-size:1.3rem;
+    color:var(--teal);
+    margin-top:6px;
   }
 </style>
 </head>
 <body>
 
-<div id="stage">
-  <div class="balloons" id="balloons"></div>
-  <canvas id="fw-canvas"></canvas>
+<div class="confetti" id="confetti"></div>
 
-  <div id="envelope-wrap">
-    <div class="env-body">
-      <div class="env-line"></div>
-    </div>
+<div class="stage">
+  <p class="hint">👉 Klik amplopnya untuk membuka</p>
+  <div class="envelope" id="envelope">
+    <div class="letter"></div>
+    <div class="env-body"></div>
     <div class="env-flap"></div>
-    <div class="env-seal">🎀</div>
-    <div class="env-hint">Ketuk amplopnya ✨</div>
+    <div class="seal">🎂</div>
+    <div class="label">Untukmu, hari ini spesial ✨</div>
   </div>
+</div>
 
-  <div id="card">
-    <div class="content">
-      <div style="font-size:42px;">🎂🎉🎈</div>
-      <h1>Selamat Ulang Tahun!</h1>
-      <div class="sub">Semoga hari ini penuh tawa & kejutan manis 🥳</div>
-      <p class="msg">
-        Hai! Semoga di umur yang baru ini kamu makin sering ketawa lepas,
-        makin jarang telat bangun (walaupun kayaknya susah 😄), rezekinya
-        makin lancar, dan segala rencana yang kamu susun perlahan mulai
-        kejadian satu-satu. Tetap jadi orang yang seru, baik hati, dan
-        tahan banting ya — dunia butuh lebih banyak orang kayak kamu.
-        Selamat ulang tahun, semoga panjang umur, sehat selalu, dan
-        makin cuan! 🎁🥂
-      </p>
-
-      <button id="reveal-btn" class="reveal-btn">Ketuk untuk lihat fotonya 📸</button>
-
-      <div id="reveal-section">
-        <div class="img-frame">
-          <svg viewBox="0 0 260 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <rect width="260" height="180" fill="#ffe9f2"/>
-            <rect x="0" y="120" width="260" height="60" fill="#f7c8dc"/>
-            <rect x="90" y="70" width="80" height="55" rx="6" fill="#f2a6c6"/>
-            <rect x="90" y="70" width="80" height="12" fill="#e0447e"/>
-            <rect x="123" y="45" width="14" height="30" fill="#fff0"/>
-            <rect x="125" y="45" width="10" height="28" fill="#ffe6b3"/>
-            <circle cx="130" cy="40" r="7" fill="#ffd166"/>
-            <circle cx="60" cy="95" r="16" fill="#ff6fa5"/>
-            <circle cx="200" cy="95" r="16" fill="#7b5ea7"/>
-            <text x="130" y="150" font-size="20" text-anchor="middle" fill="#e0447e" font-family="Comic Sans MS, sans-serif">🎂 Happy Birthday!</text>
-          </svg>
-        </div>
-
-        <div class="signature-wrap">
-          <div class="signature-line"></div>
-          <div class="signature">Dari, Aku</div>
-          <div class="signature-role">yang selalu doain kamu bahagia 💌</div>
-        </div>
-      </div>
+<div class="card-modal" id="cardModal">
+  <div class="card">
+    <button class="close-btn" id="closeBtn">✕</button>
+    <div class="balloons">
+      <div class="balloon"></div>
+      <div class="balloon"></div>
+      <div class="balloon"></div>
     </div>
+    <div class="cake">
+      <div class="candle"><div class="flame"></div></div>
+      <div class="tier tier3"></div>
+      <div class="tier tier2"></div>
+      <div class="tier tier1"></div>
+      <div class="plate"></div>
+    </div>
+    <div class="title">Selamat Ulang Tahun! 🎉</div>
+    <p class="msg">
+      Semoga di usia yang baru ini kamu selalu diberi kesehatan, kebahagiaan,
+      dan segala impianmu perlahan menjadi nyata. Terima kasih sudah menjadi
+      orang yang begitu berarti. Semoga harimu dipenuhi tawa, kejutan manis,
+      dan cinta dari orang-orang terdekat 💛
+    </p>
+    <div class="signature">— dengan sayang, untukmu 🎈</div>
   </div>
 </div>
 
 <script>
-const envWrap = document.getElementById('envelope-wrap');
-const card = document.getElementById('card');
-const fwCanvas = document.getElementById('fw-canvas');
-const balloonsWrap = document.getElementById('balloons');
-let opened = false;
+  const envelope = document.getElementById('envelope');
+  const modal = document.getElementById('cardModal');
+  const closeBtn = document.getElementById('closeBtn');
 
-// balon-balon background halus
-const balloonEmojis = ['🎈','🎈','🎈','🎈'];
-for(let i=0;i<10;i++){
-  const b = document.createElement('div');
-  b.className = 'balloon';
-  b.textContent = balloonEmojis[i % balloonEmojis.length];
-  b.style.left = (Math.random()*100)+'%';
-  b.style.animationDuration = (6+Math.random()*6)+'s';
-  b.style.animationDelay = (Math.random()*6)+'s';
-  balloonsWrap.appendChild(b);
-}
-
-// ===== FIREWORKS =====
-const ctx = fwCanvas.getContext('2d');
-function resize(){
-  fwCanvas.width = window.innerWidth;
-  fwCanvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
-
-let particles = [];
-const colors = ['#ff6fa5','#ffd166','#7b5ea7','#4dd6c1','#ff8c42','#ffffff'];
-
-function spawnFirework(x,y){
-  const count = 55;
-  for(let i=0;i<count;i++){
-    const angle = (Math.PI*2*i)/count;
-    const speed = 2 + Math.random()*3.5;
-    particles.push({
-      x,y,
-      vx: Math.cos(angle)*speed,
-      vy: Math.sin(angle)*speed,
-      life: 1,
-      color: colors[Math.floor(Math.random()*colors.length)],
-      size: 2+Math.random()*2
-    });
-  }
-}
-
-let fwRunning = false;
-function animateFireworks(){
-  if(!fwRunning) return;
-  ctx.clearRect(0,0,fwCanvas.width,fwCanvas.height);
-  particles.forEach(p=>{
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.04;
-    p.life -= 0.012;
-    ctx.globalAlpha = Math.max(p.life,0);
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    ctx.fill();
+  envelope.addEventListener('click', () => {
+    if(!envelope.classList.contains('open')){
+      envelope.classList.add('open');
+      setTimeout(() => {
+        modal.classList.add('show');
+      }, 500);
+    }
   });
-  ctx.globalAlpha = 1;
-  particles = particles.filter(p=>p.life>0);
-  requestAnimationFrame(animateFireworks);
-}
 
-function runFireworksShow(duration){
-  fwCanvas.classList.add('on');
-  fwRunning = true;
-  animateFireworks();
-  const w = fwCanvas.width, h = fwCanvas.height;
-  const interval = setInterval(()=>{
-    spawnFirework(
-      w*0.2 + Math.random()*w*0.6,
-      h*0.2 + Math.random()*h*0.5
-    );
-  }, 260);
-  setTimeout(()=>{
-    clearInterval(interval);
-    setTimeout(()=>{
-      fwRunning = false;
-      fwCanvas.classList.remove('on');
-      particles = [];
-    }, 1200);
-  }, duration);
-}
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    modal.classList.remove('show');
+    setTimeout(() => envelope.classList.remove('open'), 400);
+  });
 
-envWrap.addEventListener('click', ()=>{
-  if(opened) return;
-  opened = true;
-  envWrap.classList.add('open');
+  modal.addEventListener('click', (e) => {
+    if(e.target === modal){
+      modal.classList.remove('show');
+      setTimeout(() => envelope.classList.remove('open'), 400);
+    }
+  });
 
-  runFireworksShow(2600);
-
-  setTimeout(()=>{
-    envWrap.classList.add('hide');
-  }, 550);
-
-  setTimeout(()=>{
-    card.classList.add('show');
-  }, 900);
-});
-
-// klik kedua: setelah baca ucapan, tap tombol untuk munculkan foto & tanda tangan
-const revealBtn = document.getElementById('reveal-btn');
-const revealSection = document.getElementById('reveal-section');
-let revealed = false;
-
-revealBtn.addEventListener('click', ()=>{
-  if(revealed) return;
-  revealed = true;
-  revealSection.classList.add('show');
-  revealBtn.classList.add('hidden');
-  runFireworksShow(1800);
-  setTimeout(()=>{
-    revealSection.scrollIntoView({behavior:'smooth', block:'end'});
-  }, 200);
-});
+  // background confetti
+  const colors = ['#ff6f61','#ffd166','#2a9d8f','#ffb4a2','#e0c3fc'];
+  const confettiWrap = document.getElementById('confetti');
+  for(let i=0;i<24;i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.top = Math.random()*100 + 'vh';
+    s.style.background = colors[Math.floor(Math.random()*colors.length)];
+    s.style.animationDelay = (Math.random()*5)+'s';
+    s.style.animationDuration = (4+Math.random()*4)+'s';
+    confettiWrap.appendChild(s);
+  }
 </script>
 
 </body>
