@@ -13,7 +13,8 @@
   }
   *{box-sizing:border-box;}
   html,body{
-    margin:0;padding:0;height:100%;
+    margin:0;padding:0;
+    width:100%;height:100%;
     font-family:'Comic Sans MS','Segoe UI',cursive,sans-serif;
     background:radial-gradient(circle at 50% 20%,#3b2b5e,#1a1330 70%);
     overflow:hidden;
@@ -21,8 +22,9 @@
   }
   #stage{
     position:relative;
-    width:100%;
+    width:100vw;
     height:100vh;
+    height:100dvh;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -123,19 +125,43 @@
   /* ===== CARD ===== */
   #card{
     position:absolute;
-    width:min(92vw,420px);
-    max-height:88vh;
+    inset:0;
+    width:100%;
+    height:100%;
+    height:100dvh;
     overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
     background:linear-gradient(180deg,var(--cream),#ffe9f2);
-    border-radius:22px;
-    padding:28px 24px 24px;
-    box-shadow:0 25px 60px rgba(0,0,0,.5);
+    border-radius:0;
+    padding:40px 24px 50px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    box-shadow:none;
     text-align:center;
     opacity:0;
     transform:scale(.4) translateY(40px);
     transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.3,1.3);
     z-index:8;
-    border:3px solid #fff;
+    border:none;
+  }
+  #card .content{
+    width:100%;
+    max-width:520px;
+    margin:auto;
+  }
+  @media (min-width:700px){
+    #card{
+      inset:auto;
+      width:min(92vw,480px);
+      max-height:88vh;
+      height:auto;
+      border-radius:22px;
+      padding:28px 24px 24px;
+      box-shadow:0 25px 60px rgba(0,0,0,.5);
+      border:3px solid #fff;
+    }
   }
   #card.show{
     opacity:1;
@@ -163,19 +189,58 @@
   }
   #card.show .msg{opacity:1;}
 
+  .reveal-btn{
+    display:inline-block;
+    margin:6px 0 6px;
+    padding:13px 26px;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:bold;
+    color:#fff;
+    background:linear-gradient(135deg,var(--pink),var(--pink-dark));
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    box-shadow:0 8px 18px rgba(224,68,126,.4);
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .5s ease .5s, transform .5s ease .5s, box-shadow .2s, transform .15s;
+    animation:pulse 1.8s infinite;
+  }
+  #card.show .reveal-btn{opacity:1;transform:translateY(0);}
+  .reveal-btn:active{transform:scale(.96);}
+  .reveal-btn.hidden{display:none;}
+  @keyframes pulse{
+    0%,100%{box-shadow:0 8px 18px rgba(224,68,126,.4);}
+    50%{box-shadow:0 8px 26px rgba(224,68,126,.7);}
+  }
+
+  #reveal-section{
+    width:100%;
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height .8s ease, opacity .6s ease;
+  }
+  #reveal-section.show{
+    max-height:900px;
+    opacity:1;
+    margin-top:12px;
+  }
+
   .img-frame{
     width:100%;
     max-width:260px;
-    margin:0 auto 18px;
+    margin:6px auto 18px;
     border-radius:16px;
     overflow:hidden;
     box-shadow:0 10px 25px rgba(0,0,0,.2);
     border:4px solid #fff;
     opacity:0;
     transform:scale(.85);
-    transition:opacity .6s ease .6s, transform .6s ease .6s;
+    transition:opacity .5s ease .15s, transform .5s ease .15s;
   }
-  #card.show .img-frame{opacity:1;transform:scale(1);}
+  #reveal-section.show .img-frame{opacity:1;transform:scale(1);}
   .img-frame img{
     display:block;
     width:100%;
@@ -184,9 +249,9 @@
 
   .signature-wrap{
     opacity:0;
-    transition:opacity .6s ease .9s;
+    transition:opacity .5s ease .4s;
   }
-  #card.show .signature-wrap{opacity:1;}
+  #reveal-section.show .signature-wrap{opacity:1;}
   .signature-line{
     width:60%;
     height:1px;
@@ -241,38 +306,44 @@
   </div>
 
   <div id="card">
-    <div style="font-size:42px;">🎂🎉🎈</div>
-    <h1>Selamat Ulang Tahun!</h1>
-    <div class="sub">Semoga hari ini penuh tawa & kejutan manis 🥳</div>
-    <p class="msg">
-      Hai! Semoga di umur yang baru ini kamu makin sering ketawa lepas,
-      makin jarang telat bangun (walaupun kayaknya susah 😄), rezekinya
-      makin lancar, dan segala rencana yang kamu susun perlahan mulai
-      kejadian satu-satu. Tetap jadi orang yang seru, baik hati, dan
-      tahan banting ya — dunia butuh lebih banyak orang kayak kamu.
-      Selamat ulang tahun, semoga panjang umur, sehat selalu, dan
-      makin cuan! 🎁🥂
-    </p>
+    <div class="content">
+      <div style="font-size:42px;">🎂🎉🎈</div>
+      <h1>Selamat Ulang Tahun!</h1>
+      <div class="sub">Semoga hari ini penuh tawa & kejutan manis 🥳</div>
+      <p class="msg">
+        Hai! Semoga di umur yang baru ini kamu makin sering ketawa lepas,
+        makin jarang telat bangun (walaupun kayaknya susah 😄), rezekinya
+        makin lancar, dan segala rencana yang kamu susun perlahan mulai
+        kejadian satu-satu. Tetap jadi orang yang seru, baik hati, dan
+        tahan banting ya — dunia butuh lebih banyak orang kayak kamu.
+        Selamat ulang tahun, semoga panjang umur, sehat selalu, dan
+        makin cuan! 🎁🥂
+      </p>
 
-    <div class="img-frame">
-      <svg viewBox="0 0 260 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <rect width="260" height="180" fill="#ffe9f2"/>
-        <rect x="0" y="120" width="260" height="60" fill="#f7c8dc"/>
-        <rect x="90" y="70" width="80" height="55" rx="6" fill="#f2a6c6"/>
-        <rect x="90" y="70" width="80" height="12" fill="#e0447e"/>
-        <rect x="123" y="45" width="14" height="30" fill="#fff0"/>
-        <rect x="125" y="45" width="10" height="28" fill="#ffe6b3"/>
-        <circle cx="130" cy="40" r="7" fill="#ffd166"/>
-        <circle cx="60" cy="95" r="16" fill="#ff6fa5"/>
-        <circle cx="200" cy="95" r="16" fill="#7b5ea7"/>
-        <text x="130" y="150" font-size="20" text-anchor="middle" fill="#e0447e" font-family="Comic Sans MS, sans-serif">🎂 Happy Birthday!</text>
-      </svg>
-    </div>
+      <button id="reveal-btn" class="reveal-btn">Ketuk untuk lihat fotonya 📸</button>
 
-    <div class="signature-wrap">
-      <div class="signature-line"></div>
-      <div class="signature">Dari, Aku</div>
-      <div class="signature-role">yang selalu doain kamu bahagia 💌</div>
+      <div id="reveal-section">
+        <div class="img-frame">
+          <svg viewBox="0 0 260 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="260" height="180" fill="#ffe9f2"/>
+            <rect x="0" y="120" width="260" height="60" fill="#f7c8dc"/>
+            <rect x="90" y="70" width="80" height="55" rx="6" fill="#f2a6c6"/>
+            <rect x="90" y="70" width="80" height="12" fill="#e0447e"/>
+            <rect x="123" y="45" width="14" height="30" fill="#fff0"/>
+            <rect x="125" y="45" width="10" height="28" fill="#ffe6b3"/>
+            <circle cx="130" cy="40" r="7" fill="#ffd166"/>
+            <circle cx="60" cy="95" r="16" fill="#ff6fa5"/>
+            <circle cx="200" cy="95" r="16" fill="#7b5ea7"/>
+            <text x="130" y="150" font-size="20" text-anchor="middle" fill="#e0447e" font-family="Comic Sans MS, sans-serif">🎂 Happy Birthday!</text>
+          </svg>
+        </div>
+
+        <div class="signature-wrap">
+          <div class="signature-line"></div>
+          <div class="signature">Dari, Aku</div>
+          <div class="signature-role">yang selalu doain kamu bahagia 💌</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -379,6 +450,22 @@ envWrap.addEventListener('click', ()=>{
   setTimeout(()=>{
     card.classList.add('show');
   }, 900);
+});
+
+// klik kedua: setelah baca ucapan, tap tombol untuk munculkan foto & tanda tangan
+const revealBtn = document.getElementById('reveal-btn');
+const revealSection = document.getElementById('reveal-section');
+let revealed = false;
+
+revealBtn.addEventListener('click', ()=>{
+  if(revealed) return;
+  revealed = true;
+  revealSection.classList.add('show');
+  revealBtn.classList.add('hidden');
+  runFireworksShow(1800);
+  setTimeout(()=>{
+    revealSection.scrollIntoView({behavior:'smooth', block:'end'});
+  }, 200);
 });
 </script>
 
